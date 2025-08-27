@@ -1,3 +1,5 @@
+const { act } = require("react");
+
 const canvas= document.getElementById("gameCanvas")
 const ctx = canvas.getContext("2d")
 
@@ -160,7 +162,7 @@ function moverPacmanIzquierda() {
 }
 }
 
-document.addEventListener("keydown",(e)=>{
+document.addEventListener("keypress",(e)=>{
     if(e.key==="d"){ dx = 1; dy = 0; }
     if(e.key==="a"){ dx = -1; dy = 0; }
     if(e.key==="w"){ dx = 0; dy = -1; }
@@ -203,6 +205,75 @@ const moverSoloPacman=()=>{
 
 
 // })
+
+
+let objetivo;
+let inicio;
+
+
+
+const bfs=(inicio, objetivo,mapa) =>{
+
+    for(let y= 0;y<mapa.length;y++){
+        for(let x=0; x<mapa[y].length;x++){
+
+            if(mapa[y][x]===3){objetivo={x,y}}
+            if(mapa[y][x]=== 4){inicio={x,y}}
+
+
+        }
+    }
+
+    let cola=[inicio];
+
+    cola.push(inicio);
+
+    let visitado= new Set();
+    visitado.add(`${inicio.x},${inicio.y}`)
+
+    let padre =  {}
+
+    while(cola.length>0){
+
+        let actual = cola.shift();
+        
+        if(actual.x=== objetivo.x && actual.y=== objetivo.y) break;
+        
+
+        const vecinos = [
+        {x: actual.x + 1, y: actual.y},
+        {x: actual.x - 1, y: actual.y},
+        {x: actual.x, y: actual.y + 1},
+        {x: actual.x, y: actual.y - 1}
+    ];
+
+        for( let vecino of vecinos){
+
+            if(vecino.y >= 0 && vecino.y< mapa.length &&
+                vecino.x>=0 && vecino.x < mapa[0].length &&
+                mapa[vecino.y][vecino.x] !== 1 &&
+                !visitado.has(`${vecino.x}, ${vecino.y}`)
+            ){
+
+                cola.push(vecino)
+                visitado.add(`${vecino.x}, ${vecino.y}`);
+                padre[`${vecino.x},${vecino.y}`] = actual
+            }
+
+        }
+
+    
+
+
+
+    }
+
+
+
+
+
+
+}
 
 
 
